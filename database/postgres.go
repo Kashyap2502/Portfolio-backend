@@ -3,9 +3,11 @@ package database
 import (
 	"context"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/joho/godotenv"
 )
 
 func ConnectToDB() (*pgxpool.Pool, error) {
@@ -16,7 +18,11 @@ func ConnectToDB() (*pgxpool.Pool, error) {
 
 	defer cancel()
 
-	connectionString := "postgres://admin:password@localhost:5432/Portfolio"
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file:", err)
+	}
+	connectionString := os.Getenv("DATABASE_URL")
 
 	db, err := pgxpool.New(ctx, connectionString)
 	if err != nil {
